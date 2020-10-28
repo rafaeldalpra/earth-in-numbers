@@ -6,6 +6,7 @@ import ApiCall from "../fetch-components/RestCountries";
 import GoogleMapReact from "google-map-react";
 import googleMapStyles from "../data/googleMapStyles.json";
 import MapMarker from "../components/MapMarker";
+import MapBoxView from "../components/MapBoxView";
 
 const Country = () => {
   const { countryCode } = useParams();
@@ -22,7 +23,7 @@ const Country = () => {
           return (
             <WorldMap
               center={{ lat: json.latlng[0], lng: json.latlng[1] }}
-              zoom={5}
+              zoom={3}
               markers={[
                 <MapMarker
                   lat={json.latlng[0]}
@@ -44,16 +45,21 @@ export default Country;
 const WorldMap = ({ center, zoom, markers }) => {
   return (
     <Box height="100vh">
-      <GoogleMapReact
-        bootstrapURLKeys={{
-          key: "AIzaSyBMleeIcLiP7VPwZ6q9ddBjhesN-t3yHV8",
-        }}
-        defaultCenter={center}
-        defaultZoom={zoom}
-        options={{ styles: googleMapStyles }}
-      >
-        {markers.map((marker) => marker)}
-      </GoogleMapReact>
+      {process.env.REACT_APP_MAPS_LIBRARY === "mapbox" && (
+        <MapBoxView center={center} zoom={zoom} markers={markers} />
+      )}
+      {process.env.REACT_APP_MAPS_LIBRARY === "google" && (
+        <GoogleMapReact
+          bootstrapURLKeys={{
+            key: process.env.REACT_APP_GMAPS_KEY,
+          }}
+          defaultCenter={center}
+          defaultZoom={zoom}
+          options={{ styles: googleMapStyles }}
+        >
+          {markers.map((marker) => marker)}
+        </GoogleMapReact>
+      )}
     </Box>
   );
 };

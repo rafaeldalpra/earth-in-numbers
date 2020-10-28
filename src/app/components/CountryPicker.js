@@ -23,9 +23,6 @@ const useStyles = makeStyles((theme) => ({
       fontSize: 18,
     },
   },
-  inputInput: {
-    // width: "100%",
-  },
 }));
 
 export default function CountrySelect() {
@@ -82,16 +79,4 @@ export default function CountrySelect() {
       }}
     </ApiCall>
   );
-}
-
-{
-  /* <TextField
-  {...params}
-  label="Choose a country"
-  variant="outlined"
-  inputProps={{
-    ...params.inputProps,
-    autoComplete: "new-password", // disable autocomplete and autofill
-  }}
-/>; */
 }
