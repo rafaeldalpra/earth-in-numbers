@@ -26,6 +26,7 @@ const App = () => {
   const value = { countries, addCountry, removeCountry, setCountries };
 
   return (
+    // FiltersContext holds the state of the selected countries
     <FiltersContext.Provider value={value}>
       <div>
         <Navigation />
