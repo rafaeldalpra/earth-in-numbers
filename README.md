@@ -9,13 +9,17 @@ To successfully run the app, you will need 2 of 3 possible environment variables
 `REACT_APP_MAPS_LIBRARY=mapbox` 
 > `mapbox` or `google`
 
-If using MapBox, you need to provide it's API Key:
-`REACT_APP_MAPBOX_ACCESS_TOKEN=mapbox` 
+If using MapBox, you need to provide it's API Key:  
+`REACT_APP_MAPBOX_ACCESS_TOKEN=xxxxxx` 
 > `mapbox` or `google`
 
-If using Google Maps, you need to provide it's API Key:
-`REACT_APP_GMAPS_KEY=mapbox` 
+If using Google Maps, you need to provide it's API Key:  
+`REACT_APP_GMAPS_KEY=xxxxxx` 
 > `mapbox` or `google`
+
+Create a file named `.env` at the root of the project to use the variables.
+
+There is a file named `.env.sample` that can be used as a template.
 
 ## Available Scripts
 
