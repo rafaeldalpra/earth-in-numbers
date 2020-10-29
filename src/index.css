@@ -13,8 +13,8 @@ code {
 }
 
 .MuiAppBar-colorPrimary .MuiToolbar-root {
-  background-color: azure;
+  background-color: #87cfb0;
 }
 .MuiAppBar-colorPrimary .MuiToolbar-root h6 {
-  color: #666
+  color: #000
 }

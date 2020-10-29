@@ -1,5 +1,4 @@
 import React from "react";
-import { useParams } from "react-router-dom";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import Box from "@material-ui/core/Box";
 import ApiCall from "../fetch-components/RestCountries";
@@ -7,44 +6,41 @@ import GoogleMapReact from "google-map-react";
 import googleMapStyles from "../data/googleMapStyles.json";
 import MapMarker from "../components/MapMarker";
 import MapBoxView from "../components/MapBoxView";
+import { FiltersContext } from "../context/FiltersContext";
+import FloatingCountriesList from "../components/FloatingCountriesList";
 
-const Country = () => {
-  const { countryCode } = useParams();
-  const endpoint = countryCode ? `alpha/${countryCode}` : "all";
+const MapView = () => {
+  const { countries } = React.useContext(FiltersContext);
 
   return (
-    <ApiCall endpoint={endpoint}>
+    <ApiCall endpoint={"all"}>
       {({ isLoading, error, json }) => {
         if (isLoading) {
           return <LinearProgress color="secondary" />;
         }
 
-        if (countryCode) {
+        const markers = countries.map((code) => {
+          const data = json.filter((item) => item.alpha2Code === code)[0];
+          if (!data) {
+            return "";
+          }
           return (
-            <WorldMap
-              center={{ lat: json.latlng[0], lng: json.latlng[1] }}
-              zoom={3}
-              markers={[
-                <MapMarker
-                  lat={json.latlng[0]}
-                  lng={json.latlng[1]}
-                  data={json}
-                />,
-              ]}
-            />
+            <MapMarker lat={data.latlng[0]} lng={data.latlng[1]} data={data} />
           );
-        }
-        return <WorldMap />;
+        });
+
+        return <WorldMap markers={markers} />;
       }}
     </ApiCall>
   );
 };
 
-export default Country;
+export default MapView;
 
 const WorldMap = ({ center, zoom, markers }) => {
   return (
     <Box height="100vh">
+      <FloatingCountriesList />
       {process.env.REACT_APP_MAPS_LIBRARY === "mapbox" && (
         <MapBoxView center={center} zoom={zoom} markers={markers} />
       )}

@@ -5,41 +5,39 @@ import { renderToString } from "react-dom/server";
 
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
 
-const MapBoxView = ({ center, zoom, markers }) => {
+const MapBoxView = ({ markers }) => {
   const classes = useStyles();
   const mapContainerRef = useRef(null);
 
   useEffect(() => {
     const map = new mapboxgl.Map({
       container: mapContainerRef.current,
-      style: "mapbox://styles/mapbox/streets-v11",
-      center: [center.lng, center.lat],
-      zoom,
+      style: "mapbox://styles/rafaeldalpra/ckgty189d0y1719oxlt8w407w",
+      center: [0, 0],
+      zoom: 1,
     });
     map.addControl(new mapboxgl.NavigationControl(), "bottom-right");
 
     map.on("load", () => {
-      markers.map((item) => {
-        let marker = new mapboxgl.Marker()
+      markers.forEach((item) => {
+        if (!item.props.lng || !item.props.lat) {
+          return;
+        }
+        const marker = new mapboxgl.Marker()
           .setPopup(new mapboxgl.Popup().setHTML(renderToString(item)))
-          .setLngLat([center.lng, center.lat])
+          .setLngLat([item.props.lng, item.props.lat])
           .addTo(map);
         marker.togglePopup();
       });
     });
 
     return () => map.remove();
-  }, [center.lat, center.lng, zoom]);
+  }, [markers]);
 
   return <div className={classes.mapWrapper} ref={mapContainerRef} />;
 };
 
 MapBoxView.defaultProps = {
-  center: {
-    lat: 59.95,
-    lng: 30.33,
-  },
-  zoom: 1,
   markers: [],
 };
 

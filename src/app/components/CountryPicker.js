@@ -1,9 +1,18 @@
-import React from "react";
+import React, { useContext } from "react";
 import TextField from "@material-ui/core/TextField";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { makeStyles } from "@material-ui/core/styles";
 import ApiCall from "../fetch-components/RestCountries";
-import { useHistory } from "react-router-dom";
+import { FiltersContext } from "../context/FiltersContext";
+
+const regions = {
+  oceania: "Oceania",
+  europe: "Europe",
+  asia: "Asia",
+  americas: "Americas",
+  africa: "Africa",
+};
+const isRegion = (code) => Object.keys(regions).includes(code);
 
 export const countryToFlag = (isoCode) => {
   return typeof String.fromCodePoint !== "undefined"
@@ -15,7 +24,7 @@ export const countryToFlag = (isoCode) => {
     : isoCode;
 };
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   option: {
     fontSize: 15,
     "& > span": {
@@ -25,40 +34,58 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function CountrySelect() {
+const CountrySelect = () => {
   const classes = useStyles();
-  const history = useHistory();
-
-  const onChange = (e, selected) =>
-    history.push(selected ? `/${selected.code}` : "/");
+  const { addCountry } = useContext(FiltersContext);
 
   return (
     <ApiCall endpoint="all">
-      {({ isLoading, error, json }) => {
+      {({ isLoading, json }) => {
         if (isLoading) {
           return "";
         }
 
-        const countries = json.map((item) => ({
+        const options = json.map((item) => ({
           code: item.alpha2Code,
           label: item.name,
         }));
+        const onChange = (e, selected) => {
+          if (selected) {
+            if (isRegion(selected.code)) {
+              addCountry(
+                json
+                  .filter((item) => item.region === selected.label)
+                  .map((item) => item.alpha2Code)
+              );
+              return;
+            }
+            addCountry(selected.code);
+          }
+        };
+        Object.keys(regions).forEach((key) => {
+          options.unshift({ code: key, label: regions[key] });
+        });
 
         return (
           <Autocomplete
             style={{ width: 300 }}
-            options={countries}
+            options={options}
             classes={{
               option: classes.option,
             }}
             autoHighlight
             getOptionLabel={(option) => option.label}
-            renderOption={(option) => (
-              <React.Fragment>
-                <span>{countryToFlag(option.code)}</span>
-                {option.label} ({option.code})
-              </React.Fragment>
-            )}
+            renderOption={(option) => {
+              if (isRegion(option.code)) {
+                return option.label;
+              }
+              return (
+                <React.Fragment>
+                  <span>{countryToFlag(option.code)}</span>
+                  {option.label} ({option.code})
+                </React.Fragment>
+              );
+            }}
             onChange={onChange}
             renderInput={(params) => (
               <TextField
@@ -79,4 +106,6 @@ export default function CountrySelect() {
       }}
     </ApiCall>
   );
-}
+};
+
+export default CountrySelect;

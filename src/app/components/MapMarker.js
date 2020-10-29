@@ -3,14 +3,12 @@ import { makeStyles } from "@material-ui/core/styles";
 import NumberFormat from "react-number-format";
 
 const MapMarker = ({ data }) => {
-  console.log("logz DATA", data);
   const classes = useStyles();
   return (
     <div className={classes.marker}>
-      <p>
+      <span>
         <strong>{data.name}</strong>
-      </p>
-      <p>
+        <br />
         Population:{" "}
         {
           <NumberFormat
@@ -19,7 +17,7 @@ const MapMarker = ({ data }) => {
             thousandSeparator={true}
           />
         }
-      </p>
+      </span>
     </div>
   );
 };
@@ -30,14 +28,11 @@ MapMarker.defaultProps = {
 
 const useStyles = makeStyles((theme) => ({
   flag: {
-    marginRight: "5px",
+    marginRight: "5px ",
   },
   marker: {
     padding: "2px 5px 4px",
     fontSize: 14,
-    p: {
-      color: "red",
-    },
   },
 }));
 
